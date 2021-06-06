@@ -1,0 +1,17 @@
+svg{
+    pointer-events: none;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background-color: #198754 !important;
+}
+
+.list-group-item.active {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+}
+
+.app {
+    max-width: 500px;
+    margin: auto;
+}
