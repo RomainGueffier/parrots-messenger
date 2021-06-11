@@ -12,7 +12,10 @@ export function SocketProvider({ id, children }) {
     const [socket, setSocket] = useState()
 
     useEffect(() => {
-        const newSocket = io('http://localhost:5000', { query: { id } })
+        const newSocket = io('https://socket.parrots.thenest.freeddns.org', { 
+            transports: [ "websocket" ],
+            query: { id } 
+        })
         setSocket(newSocket)
 
         return () => newSocket.close()

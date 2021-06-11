@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  react:
+    build: ./client
+    restart: always
+    container_name: react
+    volumes:
+      - ./client:/app
+    environment:
+      - VIRTUAL_HOST=parrots.thenest.freeddns.org
+      - NODE_ENV=production
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.react.loadbalancer.server.port=80
+      - traefik.http.routers.react.rule=Host(`parrots.thenest.freeddns.org`)
+      - traefik.http.routers.react.entrypoints=websecure
+      - traefik.http.routers.react.tls=true
+      - traefik.http.routers.react.tls.certresolver=lets-encrypt
+    networks:
+      - internal
+      - web
+
+  websocket:
+    build: ./server
+    restart: always
+    container_name: websocket
+    volumes:
+      - ./server:/app
+    environment:
+      - NODE_ENV=production
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.websocket.loadbalancer.server.port=80
+      - traefik.http.routers.websocket.rule=Host(`socket.parrots.thenest.freeddns.org`)
+      - traefik.http.routers.websocket.entrypoints=websecure
+      - traefik.http.routers.websocket.tls=true
+      - traefik.http.routers.websocket.tls.certresolver=lets-encrypt
+      - traefik.http.middlewares.websocket.headers.accesscontrolalloworiginlist=*
+      - traefik.http.services.websocket.loadBalancer.sticky.cookie.name=server_id
+      - traefik.http.services.websocket.loadBalancer.sticky.cookie.httpOnly=true
+    networks:
+      - internal
+      - web
+
+networks:
+  web:
+    external: true
+  internal:
