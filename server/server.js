@@ -8,8 +8,6 @@ const io = require('socket.io')(80, {
 
 // database contains all messages not yet retrieved
 const redis = Redis.createClient()
-// default cache expiration to 24h
-const redis_expiration = 3600*24
 const connectedClients = []
 
 io.on('connection', socket => {
@@ -27,13 +25,16 @@ io.on('connection', socket => {
             const newRecipients = recipients.filter(r => r !== recipient)
             newRecipients.push(id)
 
-            // save message emitted
-            storeMessage(recipient, newRecipients, id, text)
-            
             // then send it to every connected client/user
             if (recipient in connectedClients && connectedClients[recipient] === true) {
+                console.log(recipient + ' is instantly receiving the message')
+                socket.broadcast.to(recipient).emit('receive-message', {
+                    recipients: newRecipients, sender: id, text: text
+                })
+            } else {
                 console.log(recipient + ' is retrieving his stored messages')
-                broadcastMessages(recipient)
+                // else save message emitted to history on order to be send later
+                storeMessage(recipient, newRecipients, id, text)
             }
         })
     })
@@ -42,10 +43,10 @@ io.on('connection', socket => {
      * Retrieve messages per id (recipient)
      * @param {string} recipient
      */
-    const broadcastMessages = (recipient) => {
+    const retrieveHistory = (recipient) => {
         // read database messages of user/ recipient
         // reverse to get old message first in history copy
-        console.log(`${recipient} is retrieving messages from redis`)
+        console.log(`${recipient} is retrieving historical messages from redis`)
         redis.lrange(recipient, 0, -1, (error, response) => {
 
             if (error) {
@@ -56,18 +57,13 @@ io.on('connection', socket => {
             const messages = response != null ? response : []
             // if messages stored, then parse from redis to serve on socket.io
             if (messages) {
+                // send to user every messages stored in database for him
                 // Reverse to get older messages first
-                messages.reverse().forEach((data) => {
-                    const message = JSON.parse(data)
-                    // send to user every messages stored in database for him
-                    console.log(recipient, message)
-                    socket.to(recipient).emit('receive-message', message)
-                })
+                socket.emit('retrieve-history', messages.reverse())
                 // clear database after sending all messages
                 redis.del(recipient)
             }
         })
-        
     }
 
     /**
@@ -84,7 +80,7 @@ io.on('connection', socket => {
             sender: sender,
             text: text
         })
-        console.log(`${sender} is writing messages to ${recipient} in redis`)
+        console.log(recipient + ' is storing his messages in redis because he is disconnected')
         redis.lpush(recipient, data, function(error, response) {
             if (error) console.log(error)
         })
@@ -107,7 +103,7 @@ io.on('connection', socket => {
 
     console.log(id + ' is connected')
     if (redis.exists(id)) {
-        broadcastMessages(id)
+        retrieveHistory(id)
     }
 
 })

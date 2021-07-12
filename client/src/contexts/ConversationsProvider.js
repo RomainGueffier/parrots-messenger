@@ -51,6 +51,22 @@ export function ConversationsProvider({ id, children }) {
         })
     }, [setConversations])
 
+    /** Receive History */
+    useEffect(() => {
+        if (socket === undefined) return
+
+        socket.on('retrieve-history', messages => {
+            messages.forEach((data) => {
+                // parse data from redis (json)
+                const message = JSON.parse(data)
+                addMessageToConversation(message)
+            })
+        })
+        
+        return () => socket.off('retrieve-history')
+    }, [socket, addMessageToConversation])
+
+    /** Receive instant message */
     useEffect(() => {
         if (socket === undefined) return
 
