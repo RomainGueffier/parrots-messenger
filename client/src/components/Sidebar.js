@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Tab, Nav, Button, Modal } from 'react-bootstrap-v5'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCrow, faComments, faAddressBook,faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faCrow, faComments, faAddressBook, faUserPlus, faEdit, faChevronRight, faTrash } from '@fortawesome/free-solid-svg-icons'
 import Contacts from './Contacts'
 import Conversations from './Conversations'
 import NewConversationModal from './NewConversationModal'
@@ -10,71 +10,80 @@ import NewContactModal from './NewContactModal'
 const CONVERSATIONS_KEY = 'conversations'
 const CONTACT_KEY = 'contacts'
 
-export default function Sidebar({ id }) {
+export default function Sidebar({ id, setToggleSidebar }) {
 
     const [activeKey, setActiveKey] = useState(CONVERSATIONS_KEY)
-    const [modalOpen, setModalOpen] = useState(false)
+    const [modalConversationOpen, setModalConversationOpen] = useState(false)
+    const [modalContactOpen, setModalContactOpen] = useState(false)
 
     function closeModal() {
-        setModalOpen(false)
+        setModalConversationOpen(false)
+        setModalContactOpen(false)
     }
 
     return (
-        <div className="offcanvas offcanvas-start bg-dark text-success" tabIndex="-1" id="sidebar" aria-labelledby="sidebarLabel" data-bs-scroll="true" data-bs-backdrop="false">
-            <div className="offcanvas-header">
-                <h5 className="offcanvas-title" id="sidebarLabel">
+        <div className="d-flex flex-column bg-light text-success vh-100 p-3">
+            <div className="d-flex flex-row">
+                <h1 className="d-block flex-grow-1 mt-2 display-5">
                     <FontAwesomeIcon icon={faCrow} /> Parrots
-                </h5>
-                <Button variant="dark" data-bs-dismiss="offcanvas" aria-label="Close">
-                    <FontAwesomeIcon icon={faTimes} className="text-muted" />
+                </h1>
+                <Button 
+                    onClick={() => setModalConversationOpen(true)}
+                    variant="transparent"
+                    className="text-success">
+                    <FontAwesomeIcon icon={faEdit} size="lg"/>
+                </Button>
+                <Button 
+                    onClick={() => setToggleSidebar(false)}
+                    variant="transparent"
+                    className="text-success">
+                    <FontAwesomeIcon icon={faChevronRight} size="lg"/>
                 </Button>
             </div>
-            <div className="offcanvas-body d-flex flex-column">
-                <small className="text-muted d-block mb-3">Ton identifiant est le <u>{id}</u></small>
+            <div className="d-flex flex-column h-100">
+
+                <small className="text-muted d-block my-2">Ton identifiant est : <u>{id}</u>. Partage le avec la personne avec qui tu veux discuter.</small>
+                <Button 
+                    onClick={() => window.localStorage.clear()}
+                    variant="warning">
+                    <FontAwesomeIcon icon={faTrash}/>
+                    <small> Tout réinitialiser</small>
+                </Button>
+
                 <Tab.Container activeKey={activeKey} onSelect={setActiveKey}>
-                    <Nav variant="pills" className="justify-content-center">
-                        <Nav.Item>
-                            <Nav.Link eventKey={CONVERSATIONS_KEY} className="text-light">
-                                <FontAwesomeIcon icon={faComments} /> Conversations
-                            </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link eventKey={CONTACT_KEY} className="text-light">
-                                <FontAwesomeIcon icon={faAddressBook} /> Contacts
-                            </Nav.Link>
-                        </Nav.Item>
-                    </Nav>
-                    <Tab.Content className="overflow-auto flex-grow-1 my-3 rounded">
+                    
+                    <Tab.Content className="overflow-auto flex-grow-1 bg-white my-3 rounded">
                         <Tab.Pane eventKey={CONVERSATIONS_KEY}>
-                            <Conversations />
+                            <Conversations setToggleSidebar={setToggleSidebar} />
                         </Tab.Pane>
                         <Tab.Pane eventKey={CONTACT_KEY}>
+                            <Button onClick={() => setModalContactOpen(true)} variant="light" className="m-3">
+                                <FontAwesomeIcon icon={faUserPlus} /> Ajouter un nouveau contact
+                            </Button>
                             <Contacts />
                         </Tab.Pane>
                     </Tab.Content>
 
-                    <Button onClick={() => setModalOpen(true)} variant="success">
-                        { activeKey === CONVERSATIONS_KEY ? (
-                            <>
-                                <FontAwesomeIcon icon={faComments} /> Nouvelle conversation
-                            </>
-                            ) : (
-                            <>
-                                <FontAwesomeIcon icon={faAddressBook} /> Nouveau contact
-                            </>
-                            )
-                        }
-                    </Button>
+                    <Nav variant="pills" className="justify-content-center lead">
+                        <Nav.Item>
+                            <Nav.Link eventKey={CONVERSATIONS_KEY} className="text-dark">
+                                <FontAwesomeIcon icon={faComments}/> Conversations
+                            </Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey={CONTACT_KEY} className="text-dark">
+                                <FontAwesomeIcon icon={faAddressBook} /> Contacts
+                            </Nav.Link>
+                        </Nav.Item>
+                    </Nav>
 
-                    <Modal show={modalOpen} onHide={closeModal}>
-                        { activeKey === CONVERSATIONS_KEY ?
-                            <NewConversationModal closeModal={closeModal} /> 
-                            : 
-                            <NewContactModal closeModal={closeModal} />
-                        }
-                    </Modal>
-                    
                 </Tab.Container>
+                <Modal show={modalConversationOpen} onHide={closeModal}>
+                    <NewConversationModal closeModal={closeModal} />
+                </Modal>
+                <Modal show={modalContactOpen} onHide={closeModal}>
+                    <NewContactModal closeModal={closeModal} />
+                </Modal>
             </div>
         </div>
     )

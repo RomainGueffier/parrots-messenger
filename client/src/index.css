@@ -4,14 +4,32 @@ svg{
 
 .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
     background-color: #198754 !important;
+    color: whitesmoke !important;
 }
 
 .list-group-item.active {
     background-color: #198754 !important;
     border-color: #198754 !important;
+    color: whitesmoke !important;
 }
 
 .app {
     max-width: 500px;
     margin: auto;
+    max-width: 100%;
+}
+
+.conversation-nav {
+    background: rgba(255, 255, 255, .9);
+}
+
+/**
+ * Fix for content of flex overflow when min height is not set
+ **/
+.conversation-wrapper {
+    min-height: 0;
+}
+
+.message-wrapper {
+    max-width: 30ch;
 }

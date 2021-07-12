@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { Modal, Form, Button } from 'react-bootstrap-v5'
 import { useContacts } from '../contexts/ContactsProvider'
 import { useConversations } from '../contexts/ConversationsProvider'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faComments } from '@fortawesome/free-solid-svg-icons'
 
 export default function NewConversationModal({ closeModal }) {
 
@@ -30,9 +32,13 @@ export default function NewConversationModal({ closeModal }) {
 
     return (
         <>
-            <Modal.Header closeButton>Créer une conversation</Modal.Header>
+            <Modal.Header closeButton>
+                <FontAwesomeIcon icon={faComments} size="2x" className="text-success"/>
+                Nouvelle discussion
+            </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSubmit}>
+                    <Form.Label>Liste des contacts</Form.Label>
                     {contacts.map(contact => (
                         <Form.Group className="mb-3" controlId={contact.id} key={contact.id}>
                             <Form.Check
@@ -44,8 +50,11 @@ export default function NewConversationModal({ closeModal }) {
                             </Form.Check>
                         </Form.Group>
                     ))}
-                    <Button variant="success" type="submit">
-                        Discuter
+                    <Form.Text className="text-muted">
+                        Coche plusieurs contacts pour créer une conversation de groupe
+                    </Form.Text>
+                    <Button variant="success" type="submit" className="d-block mt-3">
+                        Commencer à discuter
                     </Button>
                 </Form>
             </Modal.Body>
