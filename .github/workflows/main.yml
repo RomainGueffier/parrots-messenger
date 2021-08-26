@@ -14,8 +14,8 @@ jobs:
     - name: 🚚 Get latest code
       uses: actions/checkout@v2
         
-    - name: 🌐 Adding Known Hosts
-      run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+    - name: 🌐 Update Known Hosts
+      run: ssh-keyscan -t ecdsa ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
       
     - name: 📁 Deploy with rsync
       run: rsync -avz . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/srv/parrots.thenest/
