@@ -12,7 +12,7 @@ jobs:
     runs-on: self-hosted
     steps:
     - name: 🚚 Get latest code
-      uses: actions/check
+      uses: actions/checkout@v2
         
     - name: 🌐 Adding Known Hosts
       run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
