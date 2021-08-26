@@ -14,10 +14,14 @@ jobs:
     - name: 🚚 Get latest code
       uses: actions/checkout@v2
     
-    - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.1.0
-      with:
-        server: thenest.freeddns.org
-        username: gueffier
-        password: ${{ secrets.PASSWORD }}
-        local-dir: /srv/parrots.thenest/
+    - name: 📂 Deploy to Server
+      uses: easingthemes/ssh-deploy@main
+      env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+          
+    - name: Run docker, build and serve application
+      run: docker-compose up -d --build
