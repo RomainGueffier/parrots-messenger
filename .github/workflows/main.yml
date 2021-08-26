@@ -11,10 +11,7 @@ jobs:
     name: 🎉 Deploy
     runs-on: self-hosted
     steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v2
-      
-    - name: Deploy over SSH and run build with docker
+    - name: Git Pull & Docker Build
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
