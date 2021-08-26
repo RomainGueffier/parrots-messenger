@@ -1,35 +1,54 @@
-svg{
-    pointer-events: none;
+svg {
+  pointer-events: none;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
-    background-color: #198754 !important;
-    color: whitesmoke !important;
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: #195587 !important;
+  color: whitesmoke !important;
 }
 
 .list-group-item.active {
-    background-color: #198754 !important;
-    border-color: #198754 !important;
-    color: whitesmoke !important;
+  background-color: #195587 !important;
+  border-color: #195587 !important;
+  color: whitesmoke !important;
 }
 
 .app {
-    max-width: 500px;
-    margin: auto;
-    max-width: 100%;
+  max-width: 500px;
+  margin: auto;
+  max-width: 100%;
+}
+
+body {
+  margin: 0;
 }
 
 .conversation-nav {
-    background: rgba(255, 255, 255, .9);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 /**
  * Fix for content of flex overflow when min height is not set
  **/
 .conversation-wrapper {
-    min-height: 0;
+  min-height: 0;
 }
 
 .message-wrapper {
-    max-width: 30ch;
+  max-width: 30ch;
+}
+
+.sidebar {
+  position: fixed;
+  opacity: 0;
+  inset: 0;
+  left: 100%;
+  z-index: 1999;
+
+  transition: all 500ms ease-out;
+}
+.sidebar-opened {
+  opacity: 1;
+  left: 0;
 }
