@@ -13,6 +13,8 @@ jobs:
     steps:
     - name: 🚚 Get latest code
       uses: actions/checkout@v2
+      with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
     
     - name: 📂 Deploy to Server
       uses: easingthemes/ssh-deploy@main
