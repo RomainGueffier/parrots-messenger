@@ -12,7 +12,10 @@ jobs:
     runs-on: self-hosted
     steps:
     - name: 🚚 Get latest code
-      uses: actions/checkout@v2
+      uses: actions/check
+        
+    - name: 🌐 Adding Known Hosts
+      run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
       
     - name: 📁 Deploy with rsync
       run: rsync -avz . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/srv/parrots.thenest/
