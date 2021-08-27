@@ -21,6 +21,5 @@ jobs:
         script: |
           cd /srv/parrots.thenest/
           git pull
+          docker-compose down
           docker-compose up -d --build
-          docker exec -it react yarn install
-          docker exec -it react yarn build
